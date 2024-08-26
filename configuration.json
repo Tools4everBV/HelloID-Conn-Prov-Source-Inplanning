@@ -1,0 +1,53 @@
+[
+    {
+      "key": "Username",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+        "label": "Username",
+        "description": "The username to connect to the API",
+        "required": true
+      }
+    },
+    {
+      "key": "Password",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+        "type": "password",
+        "label": "ApiKey",
+        "description": "The password to connect to the API",
+        "required": true
+      }
+    },
+    {
+      "key": "BaseUrl",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+        "label": "BaseUrl",
+        "description": "The URL to the API.",
+        "required": true
+      }
+    },
+    {
+      "key": "HistoricalDays",
+      "type": "input",
+      "defaultValue": "1",
+      "templateOptions": {
+        "label": "HistoricalDays",
+        "description": "The number of days in the past from which the shifts will be imported.",
+        "required": true
+      }
+    },
+    {
+      "key": "FutureDays",
+      "type": "input",
+      "defaultValue": "2",
+      "templateOptions": {
+        "label": "FutureDays",
+        "description": "The number of days in the future from which the shifts will be imported.",
+        "required": true
+      }
+    }
+  ]

@@ -1,0 +1,78 @@
+{
+  "personMappings": [
+    {
+      "name": "Contact.Business.Email",
+      "mode": "field",
+      "value": "Email",
+      "validation": { "required": false }
+    },
+    {
+      "name": "Contact.Business.Phone.Fixed",
+      "mode": "field",
+      "value": "PhoneNumber",
+      "validation": { "required": false }
+    },
+    {
+      "name": "ExternalId",
+      "mode": "field",
+      "value": "ExternalId",
+      "validation": { "required": false }
+    },
+    {
+      "name": "Name.FamilyName",
+      "mode": "field",
+      "value": "LastName",
+      "validation": { "required": false }
+    },
+    {
+      "name": "Name.NickName",
+      "mode": "field",
+      "value": "FirstName",
+      "validation": { "required": false }
+    },
+    {
+      "name": "UserName",
+      "mode": "field",
+      "value": "DisplayName",
+      "validation": { "required": false }
+    }
+  ],
+  "contractMappings": [
+    {
+      "name": "EndDate",
+      "mode": "field",
+      "value": "endAt",
+      "validation": { "required": false }
+    },
+    {
+      "name": "ExternalId",
+      "mode": "field",
+      "value": "externalId",
+      "validation": { "required": false }
+    },
+    {
+      "name": "StartDate",
+      "mode": "field",
+      "value": "startAt",
+      "validation": { "required": false }
+    },
+    {
+      "name": "Location.Code",
+      "mode": "field",
+      "value": "group.uname",
+      "validation": { "required": false }
+    },
+    {
+      "name": "Location.ExternalId",
+      "mode": "field",
+      "value": "group.externalId",
+      "validation": { "required": false }
+    },
+    {
+      "name": "Location.Name",
+      "mode": "field",
+      "value": "group.name",
+      "validation": { "required": false }
+    }
+  ]
+}
