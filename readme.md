@@ -77,7 +77,7 @@ Only persons who have active shifts in the timeframe defined by `HistoricalDays`
 
 > ℹ️ _For more information on how to configure a HelloID PowerShell connector, please refer to our [documentation](https://docs.helloid.com/hc/en-us/articles/360012557600-Configure-a-custom-PowerShell-source-system) pages_
 
-> ℹ️ _If you need help, feel free to ask questions on our [forum](https://forum.helloid.com)_
+> ℹ️ _If you need help, feel free to ask questions on our [forum](https://forum.helloid.com/forum/helloid-connectors/provisioning/5176-helloid-provisioning-source-inplanning)
 
 ## HelloID docs
 
