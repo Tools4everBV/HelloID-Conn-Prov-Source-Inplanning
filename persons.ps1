@@ -57,16 +57,15 @@ try {
     }
 
     $splatGetUsers = @{
-        Uri     = "$($config.BaseUrl)/humanresources"
+        Uri     = "$($config.BaseUrl)/users?limit=0"
         Headers = $headers
         Method  = 'GET'
     }
 
     $personsWebRequest = Invoke-WebRequest @splatGetUsers
     $personsCorrected = [Text.Encoding]::UTF8.GetString([Text.Encoding]::UTF8.GetBytes($personsWebRequest.content))
-    $persons = $personsCorrected | ConvertFrom-Json
-
-    Write-Information "Retrieved $($persons.count) persons from the source system."
+    $personObjects = $personsCorrected | ConvertFrom-Json
+    $persons = $personObjects | Where-Object active -eq "True"
 
     $today = Get-Date
     $startDate = $today.AddDays( - $($config.HistoricalDays)).ToString('yyyy-MM-dd')
@@ -74,17 +73,19 @@ try {
 
     foreach ($person in $persons) {
         try {
+            If(($person.resource.Length -gt 0) -Or ($null -ne $person.resource)){
             # Create an empty list that will hold all shifts (contracts)
             $contracts = [System.Collections.Generic.List[object]]::new()
 
             $splatGetUsersShifts = @{
-                Uri     = "$($config.BaseUrl)/roster/resourceRoster?resource=$($person.uname)&startDate=$($startDate)&endDate=$($endDate)"
+                Uri     = "$($config.BaseUrl)/roster/resourceRoster?resource=$($person.resource)&startDate=$($startDate)&endDate=$($endDate)"
                 Headers = $headers
                 Method  = 'GET'
             }
 
             $personShifts = Invoke-RestMethod @splatGetUsersShifts
-
+                        
+            If($personshifts.count -gt 0){
             foreach ($day in $personShifts.days) {
                 # Removes days when person has vacation
                 if ((-not($day.parts.count -eq 0)) -and ($null -eq $day.absence)) {
@@ -129,12 +130,12 @@ try {
                     FirstName   = $person.firstName
                     LastName    = $person.lastName
                     Email       = $person.email
-                    PhoneNumber = $person.phone
+                    #PhoneNumber = $person.phone
                     Contracts   = $contracts
                 }
                 Write-Output $personObj | ConvertTo-Json -Depth 20
-            }
-        } catch {
+            }}
+        }} catch {
             $ex = $PSItem
             if ($($ex.Exception.GetType().FullName -eq 'Microsoft.PowerShell.Commands.HttpResponseException')) {
                 $errorObj = Resolve-InplanningError -ErrorObject $ex
