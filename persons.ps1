@@ -74,6 +74,7 @@ try {
     foreach ($person in $persons) {
         try {
             If(($person.resource.Length -gt 0) -Or ($null -ne $person.resource)){
+            
             # Create an empty list that will hold all shifts (contracts)
             $contracts = [System.Collections.Generic.List[object]]::new()
 
@@ -106,7 +107,7 @@ try {
                         }
 
                         $ShiftContract = @{
-                            externalId      = "$($person.uname)$($rosterDate)$($time)$($part.group.externalId)"
+                            externalId      = "$($person.resource)$($rosterDate)$($time)$($part.group.externalId)"
                             labourHist      = $part.labourHist
                             labourHistGroup = $part.labourHistGroup
                             shift           = $part.shift
@@ -125,7 +126,7 @@ try {
 
             if ($contracts.Count -gt 0) {
                 $personObj = [PSCustomObject]@{
-                    ExternalId  = $person.uname
+                    ExternalId  = $person.resource
                     DisplayName = "$($person.firstName) $($person.lastName)".Trim(' ')
                     FirstName   = $person.firstName
                     LastName    = $person.lastName
