@@ -34,7 +34,7 @@ Currently the following endpoints are being used..
 | Endpoint                     |
 | ---------------------------- |
 | api/token                    |
-| api/humanresources           |
+| api/users                    |
 | api/roster/resourceRoster    |
 
 
