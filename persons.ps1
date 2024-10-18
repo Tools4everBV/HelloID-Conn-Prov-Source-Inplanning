@@ -1,7 +1,7 @@
 ##################################################
 # HelloID-Conn-Prov-Source-Inplanning-Persons
 #
-# Version: 1.0.0
+# Version: 1.1.0
 ##################################################
 # Initialize default value's
 $config = $configuration | ConvertFrom-Json
@@ -66,6 +66,7 @@ try {
     $personsCorrected = [Text.Encoding]::UTF8.GetString([Text.Encoding]::UTF8.GetBytes($personsWebRequest.content))
     $personObjects = $personsCorrected | ConvertFrom-Json
     $persons = $personObjects | Where-Object active -eq "True"
+    $persons = $persons | Sort-Object resource -Unique
 
     $today = Get-Date
     $startDate = $today.AddDays( - $($config.HistoricalDays)).ToString('yyyy-MM-dd')
@@ -87,12 +88,15 @@ try {
             $personShifts = Invoke-RestMethod @splatGetUsersShifts
                         
             If($personshifts.count -gt 0){
+            $counter = 0
             foreach ($day in $personShifts.days) {
+
                 # Removes days when person has vacation
                 if ((-not($day.parts.count -eq 0)) -and ($null -eq $day.absence)) {
 
                     $rosterDate = $day.rosterDate
                     foreach ($part in $day.parts) {
+                        $counter = ($counter + 1)
                         # Define the pattern for hh:mm-hh:mm
                         $pattern = '^\d{2}:\d{2}-\d{2}:\d{2}'
                         $time = [regex]::Match($part.shift.uname, $pattern)
@@ -106,12 +110,22 @@ try {
                             $endTime = '00:00'
                         }
 
+                        if($part.prop){
+                            $functioncode = $part.prop.uname
+                            $function = $part.prop.name
+                        } else {
+                            $functioncode = ""
+                            $function = ""                           
+                        }
+
                         $ShiftContract = @{
-                            externalId      = "$($person.resource)$($rosterDate)$($time)$($part.group.externalId)"
+                            externalId      = "$($person.resource)$($rosterDate)$($time)$($counter)$($part.group.externalId)"
                             labourHist      = $part.labourHist
                             labourHistGroup = $part.labourHistGroup
                             shift           = $part.shift
                             group           = $part.group
+                            functioncode    = $functioncode
+                            functionname    = $function
                             # Add the same fields as for shift. Otherwise, the HelloID mapping will fail
                             # The value of both the 'startAt' and 'endAt' cannot be null. If empty, HelloID is unable
                             # to determine the start/end date, resulting in the contract marked as 'active'.
@@ -131,7 +145,6 @@ try {
                     FirstName   = $person.firstName
                     LastName    = $person.lastName
                     Email       = $person.email
-                    #PhoneNumber = $person.phone
                     Contracts   = $contracts
                 }
                 Write-Output $personObj | ConvertTo-Json -Depth 20
