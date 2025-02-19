@@ -1,6 +1,9 @@
 
 # HelloID-Conn-Prov-Source-Inplanning
 
+[![Workflow Status](https://github.com/Tools4everBV/HelloID-Conn-Prov-Source-Inplanning/actions/workflows/createRelease.yaml/badge.svg)](https://github.com/Tools4everBV/HelloID-Conn-Prov-Source-Inplanning/actions/workflows/createRelease.yaml)
+![Release](https://img.shields.io/github/v/release/Tools4everBV/HelloID-Conn-Prov-Source-Inplanning?label=Release)
+
 
 | :information_source: Information                                                                                                                                                                                                                                                                                                                                                       |
 | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
