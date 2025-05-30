@@ -6,6 +6,7 @@
 # Initialize default value's
 $config = $configuration | ConvertFrom-Json
 
+#region functions
 function Resolve-InplanningError {
     [CmdletBinding()]
     param (
@@ -32,7 +33,7 @@ function Resolve-InplanningError {
     }
 }
 
-try {
+function Retrieve-AccessToken {
     $pair = "$($config.Username):$($config.Password)"
     $bytes = [System.Text.Encoding]::ASCII.GetBytes($pair)
     $base64 = [System.Convert]::ToBase64String($bytes)
@@ -49,11 +50,33 @@ try {
         Body    = 'grant_type=client_credentials'
     }
 
-    $accessToken = (Invoke-RestMethod @splatGetToken).access_token
+    $result = (Invoke-RestMethod @splatGetToken)
+    $script:expirationTimeAccessToken = (Get-Date).AddSeconds($result.expires_in)
 
+    return $result.access_token
+}
+
+function Confirm-AccessTokenIsValid {
+    if ($null -ne $Script:expirationTimeAccessToken) {
+        if ((Get-Date) -le $Script:expirationTimeAccessToken) {
+            return $true
+        }
+    }
+    return $false
+}
+#endregion functions
+
+try {
+    $accessToken = Retrieve-AccessToken
     $headers = @{
         Authorization = "Bearer $($accessToken)"
         Accept        = 'application/json; charset=utf-8'
+    }
+
+    $splatGetUsers = @{
+        Uri     = "$($config.BaseUrl)/users?limit=0"
+        Headers = $headers
+        Method  = 'GET'
     }
 
     $splatGetUsers = @{
@@ -75,9 +98,19 @@ try {
     foreach ($person in $persons) {
         try {
             If(($person.resource.Length -gt 0) -Or ($null -ne $person.resource)){
-            
+
             # Create an empty list that will hold all shifts (contracts)
             $contracts = [System.Collections.Generic.List[object]]::new()
+
+            # Check if token is still valid
+            if(-not (Confirm-AccessTokenIsValid)){
+                $accessToken = Retrieve-AccessToken
+
+                $headers = @{
+                    Authorization = "Bearer $($accessToken)"
+                    Accept        = 'application/json; charset=utf-8'
+                }
+            }
 
             $splatGetUsersShifts = @{
                 Uri     = "$($config.BaseUrl)/roster/resourceRoster?resource=$($person.resource)&startDate=$($startDate)&endDate=$($endDate)"
@@ -86,7 +119,7 @@ try {
             }
 
             $personShifts = Invoke-RestMethod @splatGetUsersShifts
-                        
+
             If($personshifts.count -gt 0){
             $counter = 0
             foreach ($day in $personShifts.days) {
@@ -115,7 +148,7 @@ try {
                             $function = $part.prop.name
                         } else {
                             $functioncode = ""
-                            $function = ""                           
+                            $function = ""
                         }
 
                         $ShiftContract = @{
